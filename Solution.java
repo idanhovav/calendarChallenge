@@ -17,14 +17,14 @@ public class Solution {
 	}
 	public static void main(String[] args) {
 		int counter = 0;
-		int day = 1;
 		int days_after_start = 0;
 		for (int year = 1900; year <= 2000; year++) {
 			for (int month = 0; month < 12; month++) {
 				if (year != 1900 && isSunday(days_after_start)) {
 					counter++;
 				}
-				days_after_start += daysInMonth(month, year);
+				//since we're going to the next first day of the month
+				days_after_start += daysInMonth(month, year); 
 			}
 		}
 		System.out.println(counter);
