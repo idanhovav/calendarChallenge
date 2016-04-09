@@ -2,19 +2,6 @@ import java.io.*;
 import java.util.*;
 
 public class Solution {
-	// can just define as static
-	static class Date {
-		int day;
-		int days_after_start;
-		
-		public Date(int day, int days_after_start) {
-			this.day = day;
-			this.days_after_start = days_after_start;
-		}
-		public boolean isBothFirstAndSunday() {
-			return (this.day == 1 && (this.days_after_start % 7 == 6));
-		}
-	}
 	public static void main(String[] args) {
 		int counter = 0;
 		int days_after_start = 0;
@@ -33,7 +20,39 @@ public class Solution {
 	private static boolean isSunday(int days_after_start) {
 		return (days_after_start % 7 == 6);
 	}
+	public static int daysInMonth(int month, int year) {
+		if (month == 3 || month == 5 || month == 8 || month == 10) {
+			return 30;
+		} else if (month == 0 || month == 2 || month == 4 || month == 6 || month == 7 || month == 9 || month == 11) {
+			return 31;
+		} else if ((year % 100 == 0 && year % 400 != 0)|| year % 4 != 0) {
+			return 28;
+		} else {
+			return 29;
+		}
+	}
 	
+	/* Under this line was the previous approach.
+	* Some central changes include:
+	* - double for loop instead of while loop
+	* - not using a day object
+	* - easier to read (IMO)
+	* - faster (but only by constant coefficient of ~30) since it only checks first day.
+	* - 
+	*/
+	// can just define as static
+	static class Date {
+		int day;
+		int days_after_start;
+		
+		public Date(int day, int days_after_start) {
+			this.day = day;
+			this.days_after_start = days_after_start;
+		}
+		public boolean isBothFirstAndSunday() {
+			return (this.day == 1 && (this.days_after_start % 7 == 6));
+		}
+	}
 	public static int calculate() {
 		int counter = 0;
 		int day = 1;
@@ -41,16 +60,6 @@ public class Solution {
 		int year = 1900;
 		int days_after_start = 0;
 		boolean isEnd = false;
-		
-		
-		/*
-		int days_after_start = 0;
-		int day = 1;
-		for year:
-			for month:
-				days_after_start = daysInMonth(month, year);
-		
-		*/
 		
 		while (!isEnd) {
 			Date thisDate = new Date(day, days_after_start);
@@ -88,18 +97,6 @@ public class Solution {
 		returnVals[1] = month;
 		returnVals[2] = year;
 		return returnVals;
-	}
-	
-	public static int daysInMonth(int month, int year) {
-		if (month == 3 || month == 5 || month == 8 || month == 10) {
-			return 30;
-		} else if (month == 0 || month == 2 || month == 4 || month == 6 || month == 7 || month == 9 || month == 11) {
-			return 31;
-		} else if ((year % 100 == 0 && year % 400 != 0)|| year % 4 != 0) {
-			return 28;
-		} else {
-			return 29;
-		}
 	}
 }
 
