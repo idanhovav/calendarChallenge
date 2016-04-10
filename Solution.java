@@ -3,6 +3,13 @@ import java.util.*;
 
 public class Solution {
 	public static void main(String[] args) {
+		HashSet<Date> dates = new HashSet();
+		Scanner userInput = new Scanner(System.in);
+		String response = getDayOrSet(userInput);
+		if (response.equals("day")) {
+			String date = getSpecificDate(userInput);
+		}
+		
 		int counter = 0;
 		int days_after_start = 0;
 		for (int year = 1900; year <= 2000; year++) {
@@ -30,6 +37,19 @@ public class Solution {
 		} else {
 			return 29;
 		}
+	}
+	private static String getDayOrSet(Scanner userInput) {
+		System.out.println("Welcome to DateFacts! Give us a day or a set of days, 
+			and we'll find some cool facts about them!");
+		System.out.println("If you'd like to learn about a specific day, enter 'day'. \n
+			If you want to learn about a set of days, enter 'set'");
+		String response = userInput.nextLine();
+		return response;
+	}
+	private static String getSpecificDate(Scanner userInput) {
+		System.out.println("Please enter the specific date in the form mm/dd/yyyy");
+		String specificDate = userInput.nextLine();
+		return specificDate;
 	}
 	
 	/* Under this line was the previous approach.
