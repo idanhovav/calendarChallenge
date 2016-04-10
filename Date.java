@@ -25,6 +25,6 @@ public class Date {
 	}
 	@Override
 	public int hashCode() {
-		return (10000000 * day) + (10000 * month) + year;
+		return (3100 * this.day) + (310 * this.month) + (31 * this.year) - (this.day + this.month);
 	}
 }
