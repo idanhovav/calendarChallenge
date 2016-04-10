@@ -1,31 +1,99 @@
 import java.io.*;
 import java.util.*;
 
+/* Idea:
+create a date object. has day of week (how, where to start?)
+
+Manipulation of what days to add to hashmap.
+
+Create a hashmap of dates and a fun fact scraped from wikipedia about that day.
+
+
+
+*/
+
+// EVERYTHING in the form of day month year
+
+
 public class Solution {
+	public static final int MONTHS_IN_YEAR = 12;
+	public static final int DAYS_IN_WEEK = 7;
 	public static void main(String[] args) {
-		HashSet<Date> dates = new HashSet();
+		ArrayList<Date> dates = new ArrayList();
 		Scanner userInput = new Scanner(System.in);
 		String response = getDayOrSet(userInput);
+		int startYear, endYear, startMonth, endMonth, startDay, endDay;
+		int[] startDate, endDate;
+		// check inputs
 		if (response.equals("day")) {
-			String date = getSpecificDate(userInput);
+			startDate = getDate(userInput, "specific");
+			endDate = startDate;
+		} else {
+			int[] startDate = getDate(userInput, "starting");
+			int[] endDate = getDate(userInput, "ending");
 		}
-		
-		int counter = 0;
-		int days_after_start = 0;
-		for (int year = 1900; year <= 2000; year++) {
-			for (int month = 0; month < 12; month++) {
-				if (year != 1900 && isSunday(days_after_start)) {
-					counter++;
+		startDay = startDate[0];
+		startMonth = startDate[1];
+		startYear = startDate[2];
+		endDay = endDate[0];
+		endMonth = endDate[1];
+		endYear = endDate[2];
+
+		addDaysToList(dates, startYear, endYear, startMonth, endMonth, startDay, endDay);
+		// now we have the days in a hashset.
+
+		printList(dates);
+	}
+	private static void addDaysToList(ArrayList<Date> dates, int startYear, int endYear, int startMonth,
+		int endMonth, int startDay, int endDay) {
+		int[] mLimits, dLimits; //monthLimits and dayLimits, respectively.
+		int yearlyStartMonth;
+		int yearlyEndMonth;
+		int monthlyStartDay;
+		int monthlyEndDay;
+
+		for (int year = startYear; year <= endYear; year++) {
+			mLimits = monthLimits(year, startYear, endYear, startMonth, endMonth);
+			yearlyStartMonth = limits[0];
+			yearlyEndMonth = limits[1];
+			for (int month = yearlyStartMonth; month <= yearlyEndMonth; month++) {
+				dLimits = dayLimits(month, year, startYear, endYear, startMonth,
+					endMonth, startDay, endDay);
+				monthlyStartDay = dLimits[0];
+				monthlyEndDay = dLimits[1];
+				for (int day = monthlyStartDay; day <= monthlyEndDay; day++) {
+					dates.add(new Date(day, month, year));
 				}
-				//since we're going to the next first day of the month
-				days_after_start += daysInMonth(month, year); 
 			}
 		}
-		System.out.println(counter);
-		
 	}
-	private static boolean isSunday(int days_after_start) {
-		return (days_after_start % 7 == 6);
+	private static int[] dayLimits(int month, int year, int startYear, int endYear,
+		int startMonth, int endMonth, int startDay, int endDay) {
+		int[] limits = new int[2];
+		int monthlyStartDay = 1;
+		int monthlyEndDay = daysInMonth(month, year);
+		if (month == startMonth && year == startYear) {
+			monthlyStartDay = startDay;
+		} else if (month == endMonth && year == endYear) {
+			monthlyEndDay = endDay;
+		}
+		limits[0] = monthlyStartDay;
+		limits[1] = monthlyEndDay;
+		return limits;
+	}
+	private static int[] monthLimits(int year, int startYear, int endYear,
+		int startMonth, int endMonth) {
+		int[] limits = new int[2];
+		int yearlyStartMonth = 1;
+		int yearlyEndMonth = 12;
+		if (year == startYear) {
+			yearlyStartMonth = startMonth;
+		} else if (year == endYear) {
+			yearlyEndMonth = endMonth;
+		}
+		limits[0] = yearlyStartMonth;
+		limits[1] = yearlyEndMonth;
+		return limits;
 	}
 	public static int daysInMonth(int month, int year) {
 		if (month == 3 || month == 5 || month == 8 || month == 10) {
@@ -46,77 +114,17 @@ public class Solution {
 		String response = userInput.nextLine();
 		return response;
 	}
-	private static String getSpecificDate(Scanner userInput) {
-		System.out.println("Please enter the specific date in the form mm/dd/yyyy");
-		String specificDate = userInput.nextLine();
-		return specificDate;
+	private static int[] getDate(Scanner userInput, String descriptor) {
+		System.out.println("Please enter the " + descriptor + " date in the form dd/mm/yyyy");
+		String date = userInput.nextLine();
+		int day = Integer.parseInt(date.substring(0, 2));
+		int month = Integer.parseInt(date.substring(3, 5));
+		int year = Integer.parseInt(date.substring(6, 10));
+		return new int[3]{day, month, year};
 	}
-	
-	/* Under this line was the previous approach.
-	* Some central changes include:
-	* - double for loop instead of while loop
-	* - not using a day object
-	* - easier to read (IMO)
-	* - faster (but only by constant coefficient of ~30) since it only checks first day.
-	* - 
-	*/
-	// can just define as static
-	static class Date {
-		int day;
-		int days_after_start;
-		
-		public Date(int day, int days_after_start) {
-			this.day = day;
-			this.days_after_start = days_after_start;
+	private static void printList(ArrayList<Date> dates) {
+		for (date : dates) {
+			System.out.println(date.toString() + " " + dates.hashCode());
 		}
-		public boolean isBothFirstAndSunday() {
-			return (this.day == 1 && (this.days_after_start % 7 == 6));
-		}
-	}
-	public static int calculate() {
-		int counter = 0;
-		int day = 1;
-		int month = 0;
-		int year = 1900;
-		int days_after_start = 0;
-		boolean isEnd = false;
-		
-		while (!isEnd) {
-			Date thisDate = new Date(day, days_after_start);
-			if (thisDate.isBothFirstAndSunday() && year >= 1901) {
-				counter++;
-			}
-			int[] updatedVals = update(day, month, year);
-			day = updatedVals[0];
-			month = updatedVals[1];
-			year = updatedVals[2];
-			isEnd = (year == 2001);
-			days_after_start++;
-		}
-		return counter;
-	}
-	
-	
-	public static int[] update(int day, int month, int year) {
-		int[] returnVals = new int[3];
-		int days_in_month = daysInMonth(month, year);
-		if (day == days_in_month) {
-			if (month == 11) {
-				year++;
-				month = 0;
-				day = 1;
-			} else {
-				month++;
-				day = 1;
-			}
-		} else {
-			day++;
-		}
-		
-		returnVals[0] = day;
-		returnVals[1] = month;
-		returnVals[2] = year;
-		return returnVals;
 	}
 }
-
